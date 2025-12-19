@@ -1,0 +1,138 @@
+.direction-input {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.step-intro {
+  margin-bottom: var(--space-xl);
+}
+
+.step-intro h1 {
+  margin-bottom: var(--space-sm);
+}
+
+.step-intro p {
+  margin: 0 auto;
+}
+
+.direction-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-label {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin-bottom: var(--space-sm);
+}
+
+.direction-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+@media (max-width: 520px) {
+  .direction-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.direction-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--space-md);
+  background-color: var(--color-warm-white);
+  border: 1px solid var(--color-sand);
+  border-radius: 6px;
+  text-align: left;
+  transition: all var(--transition-gentle);
+}
+
+.direction-option:hover {
+  border-color: var(--color-warm-gray);
+}
+
+.direction-option.selected {
+  border-color: var(--color-accent);
+  background-color: rgba(184, 151, 122, 0.08);
+}
+
+.direction-label {
+  font-weight: 500;
+  color: var(--color-charcoal);
+  margin-bottom: 4px;
+}
+
+.direction-desc {
+  font-size: 0.8125rem;
+  color: var(--color-warm-gray);
+}
+
+.custom-direction-input {
+  background-color: var(--color-cream);
+}
+
+.confidence-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.confidence-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--space-md);
+  background-color: var(--color-warm-white);
+  border: 1px solid var(--color-sand);
+  border-radius: 6px;
+  text-align: left;
+  transition: all var(--transition-gentle);
+}
+
+.confidence-option:hover {
+  border-color: var(--color-warm-gray);
+}
+
+.confidence-option.selected {
+  border-color: var(--color-accent);
+  background-color: rgba(184, 151, 122, 0.08);
+}
+
+.confidence-label {
+  font-weight: 500;
+  color: var(--color-charcoal);
+  margin-bottom: 2px;
+}
+
+.confidence-desc {
+  font-size: 0.8125rem;
+  color: var(--color-warm-gray);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-sand);
+}
+
+.form-actions .btn-primary {
+  min-width: 140px;
+}
+
+.form-actions .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+

@@ -1,0 +1,123 @@
+.confirmation {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.confirmation .step-intro {
+  margin-bottom: var(--space-xl);
+}
+
+.confirmation-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.confirmation-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background-color: var(--color-warm-white);
+  border: 1px solid var(--color-sand);
+  border-radius: 8px;
+  text-align: left;
+  transition: all var(--transition-gentle);
+}
+
+.confirmation-option:hover {
+  border-color: var(--color-warm-gray);
+}
+
+.confirmation-option.selected {
+  border-color: var(--color-accent);
+  background-color: rgba(184, 151, 122, 0.08);
+}
+
+.option-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-sand);
+  border-radius: 50%;
+  font-size: 0.875rem;
+  color: var(--color-stone);
+  transition: all var(--transition-gentle);
+}
+
+.confirmation-option.selected .option-icon {
+  background-color: var(--color-accent);
+  color: var(--color-cream);
+}
+
+.option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.option-title {
+  font-weight: 500;
+  color: var(--color-charcoal);
+}
+
+.option-desc {
+  font-size: 0.875rem;
+  color: var(--color-warm-gray);
+}
+
+.adjustments-section {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-lg);
+  background-color: var(--color-warm-white);
+  border-radius: 8px;
+}
+
+.adjustments-label {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin-bottom: var(--space-xs);
+  display: block;
+}
+
+.adjustments-section textarea {
+  background-color: var(--color-cream);
+}
+
+.confirmation-summary {
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, rgba(232, 228, 221, 0.4) 0%, rgba(250, 248, 245, 0.8) 100%);
+  border-radius: 8px;
+  margin-bottom: var(--space-lg);
+}
+
+.summary-header h3 {
+  font-size: 1rem;
+  margin-bottom: var(--space-sm);
+}
+
+.summary-text {
+  font-size: 0.9375rem;
+  color: var(--color-stone);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-sand);
+}
+
+.step-actions .btn-primary {
+  min-width: 140px;
+}
+

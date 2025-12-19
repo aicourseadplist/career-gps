@@ -1,0 +1,221 @@
+.you-are-here {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.intro-label {
+  font-family: var(--font-serif);
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--color-accent);
+  margin-bottom: var(--space-xs);
+  letter-spacing: 0.05em;
+}
+
+.intro-note {
+  color: var(--color-warm-gray);
+  font-size: 0.9375rem;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.direction-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-lg);
+  margin: var(--space-xl) 0;
+  background: linear-gradient(135deg, rgba(184, 151, 122, 0.08) 0%, rgba(232, 228, 221, 0.4) 100%);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.direction-prefix {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-warm-gray);
+  margin-bottom: var(--space-xs);
+}
+
+.direction-name {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.assessment-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.assessment-section {
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-sand);
+}
+
+.assessment-section:last-child {
+  border-bottom: none;
+}
+
+.section-title {
+  font-size: 1.125rem;
+  margin-bottom: var(--space-md);
+  color: var(--color-charcoal);
+}
+
+/* Stage Card */
+.stage-card {
+  background-color: var(--color-warm-white);
+  padding: var(--space-lg);
+  border-radius: 8px;
+  border-left: 3px solid var(--color-accent);
+}
+
+.stage-label {
+  display: inline-block;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin-bottom: var(--space-xs);
+}
+
+.stage-description {
+  color: var(--color-stone);
+  margin: 0;
+}
+
+/* Asset List */
+.asset-list,
+.gap-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.asset-item,
+.gap-item {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.asset-icon,
+.gap-icon {
+  flex-shrink: 0;
+  width: 20px;
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  padding-top: 3px;
+}
+
+.asset-content,
+.gap-content {
+  flex: 1;
+}
+
+.asset-text,
+.gap-text {
+  color: var(--color-charcoal);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.asset-signal,
+.gap-note {
+  font-size: 0.875rem;
+  color: var(--color-warm-gray);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Readiness Grid */
+.readiness-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.readiness-item {
+  background-color: var(--color-warm-white);
+  padding: var(--space-md);
+  border-radius: 6px;
+}
+
+.readiness-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.readiness-name {
+  font-weight: 500;
+  color: var(--color-charcoal);
+}
+
+.readiness-level {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: var(--color-sand);
+  color: var(--color-stone);
+}
+
+.readiness-level.level-developing {
+  background-color: rgba(232, 228, 221, 0.8);
+  color: var(--color-warm-gray);
+}
+
+.readiness-level.level-moderate {
+  background-color: rgba(201, 179, 156, 0.3);
+  color: var(--color-stone);
+}
+
+.readiness-level.level-high {
+  background-color: rgba(184, 151, 122, 0.25);
+  color: #7a644f;
+}
+
+.readiness-note {
+  font-size: 0.875rem;
+  color: var(--color-stone);
+  margin: 0;
+}
+
+/* Transition Block */
+.transition-block {
+  margin: var(--space-xl) 0;
+  padding: var(--space-lg);
+  text-align: center;
+  background: rgba(250, 248, 245, 0.8);
+  border-radius: 8px;
+}
+
+.transition-text {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-style: italic;
+  color: var(--color-stone);
+  margin: 0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Actions */
+.step-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--space-md);
+}
+
+.step-actions .btn-primary {
+  min-width: 180px;
+}
+
