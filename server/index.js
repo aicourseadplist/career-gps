@@ -38,7 +38,7 @@ function extractJSON(text) {
 }
 
 // System prompt that defines the product philosophy
-const SYSTEM_PROMPT = `You are an AI assistant for Career GPS, a career clarity product.
+const SYSTEM_PROMPT = `You are an AI assistant for Cago, a career clarity product.
 
 YOUR CORE PURPOSE:
 Help people who have already chosen a direction but feel uncertain. Your job is to provide CLARITY — the kind of clarity that comes from feeling truly understood and seeing your situation mapped out clearly.
@@ -418,6 +418,6 @@ app.get('/api/health', (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Career GPS API running on http://localhost:${PORT}`)
+  console.log(`Cago API running on http://localhost:${PORT}`)
 })
 

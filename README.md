@@ -1,4 +1,4 @@
-# Career GPS 🧭
+# Cago 🧭
 
 A calm, AI-powered career clarity tool. Designed for people who have already picked a direction but feel unsure, underprepared, or unclear what that really means.
 

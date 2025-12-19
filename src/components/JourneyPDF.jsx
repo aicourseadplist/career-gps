@@ -196,7 +196,7 @@ function JourneyDocument({ userData, assessment, mentor, plan }) {
     <Document>
       {/* Cover Page */}
       <Page size="A4" style={styles.coverPage}>
-        <Text style={styles.coverSubtitle}>Career GPS</Text>
+        <Text style={styles.coverSubtitle}>Cago</Text>
         <Text style={styles.coverTitle}>Your Clarity Journey</Text>
         <View style={{ marginTop: 30 }}>
           <Text style={styles.label}>Direction</Text>
@@ -209,7 +209,7 @@ function JourneyDocument({ userData, assessment, mentor, plan }) {
       {assessment && (
         <Page size="A4" style={styles.page}>
           <View style={styles.pageHeader}>
-            <Text style={styles.logo}>Career GPS</Text>
+            <Text style={styles.logo}>Cago</Text>
             <Text style={styles.pageNumber}>You Are Here</Text>
           </View>
           
@@ -260,7 +260,7 @@ function JourneyDocument({ userData, assessment, mentor, plan }) {
       {mentor && mentor.mentor && (
         <Page size="A4" style={styles.page}>
           <View style={styles.pageHeader}>
-            <Text style={styles.logo}>Career GPS</Text>
+            <Text style={styles.logo}>Cago</Text>
             <Text style={styles.pageNumber}>Mentor Match</Text>
           </View>
 
@@ -312,7 +312,7 @@ function JourneyDocument({ userData, assessment, mentor, plan }) {
         <>
           <Page size="A4" style={styles.page}>
             <View style={styles.pageHeader}>
-              <Text style={styles.logo}>Career GPS</Text>
+              <Text style={styles.logo}>Cago</Text>
               <Text style={styles.pageNumber}>Execution Plan</Text>
             </View>
 
@@ -368,7 +368,7 @@ function JourneyDocument({ userData, assessment, mentor, plan }) {
           {plan.phasedPath && (
             <Page size="A4" style={styles.page}>
               <View style={styles.pageHeader}>
-                <Text style={styles.logo}>Career GPS</Text>
+                <Text style={styles.logo}>Cago</Text>
                 <Text style={styles.pageNumber}>90-Day Path</Text>
               </View>
 
@@ -437,7 +437,7 @@ export async function downloadJourneyPDF(userData, assessment, mentor, plan) {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `career-gps-${(userData.directionLabel || userData.direction || 'journey').toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`
+    link.download = `cago-${(userData.directionLabel || userData.direction || 'journey').toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

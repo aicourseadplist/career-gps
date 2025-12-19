@@ -4,7 +4,7 @@ function Header({ onLogoClick }) {
       <div className="container">
         <div className="header-inner">
           <button className="logo" onClick={onLogoClick}>
-            Career GPS
+            Cago
           </button>
           <span className="text-small text-muted">
             clarity before action
