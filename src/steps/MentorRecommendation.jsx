@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { generateMentorRecommendation, extractMeetingInsights } from '../api/client'
+import { generateMentorRecommendation, extractMeetingInsights, connectReadAi, fetchReadAiMeetings, disconnectReadAi } from '../api/client'
 import LoadingState from '../components/LoadingState'
 import FollowUpsAndReminders from '../components/FollowUpsAndReminders'
 import './MentorRecommendation.css'
@@ -14,6 +14,12 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
   const [extractError, setExtractError] = useState(null)
   const [meetingInsights, setMeetingInsights] = useState(null)
   const [showReadAiHelp, setShowReadAiHelp] = useState(false)
+  const [readAiApiKey, setReadAiApiKey] = useState('')
+  const [readAiConnected, setReadAiConnected] = useState(false)
+  const [readAiConnecting, setReadAiConnecting] = useState(false)
+  const [readAiFetching, setReadAiFetching] = useState(false)
+  const [readAiError, setReadAiError] = useState(null)
+  const [readAiMeetings, setReadAiMeetings] = useState([])
 
   useEffect(() => {
     async function fetchRecommendation() {
@@ -30,7 +36,94 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
     }
 
     fetchRecommendation()
+    
+    // Check if Read.ai is already connected
+    const storedKey = localStorage.getItem('readai_api_key')
+    const storedStatus = localStorage.getItem('readai_connected')
+    if (storedKey && storedStatus === 'true') {
+      setReadAiApiKey(storedKey)
+      setReadAiConnected(true)
+    }
   }, [userData])
+
+  const handleConnectReadAi = async () => {
+    if (!readAiApiKey.trim()) {
+      setReadAiError('Please enter your Read.ai API key')
+      return
+    }
+
+    setReadAiConnecting(true)
+    setReadAiError(null)
+
+    try {
+      await connectReadAi(readAiApiKey)
+      localStorage.setItem('readai_api_key', readAiApiKey)
+      localStorage.setItem('readai_connected', 'true')
+      setReadAiConnected(true)
+      setShowReadAiHelp(false)
+    } catch (err) {
+      console.error('Failed to connect Read.ai:', err)
+      setReadAiError(err.message || 'Failed to connect. Please check your API key.')
+    } finally {
+      setReadAiConnecting(false)
+    }
+  }
+
+  const handleFetchReadAiMeetings = async () => {
+    const apiKey = readAiApiKey || localStorage.getItem('readai_api_key')
+    if (!apiKey) {
+      setReadAiError('Please connect Read.ai first')
+      return
+    }
+
+    setReadAiFetching(true)
+    setReadAiError(null)
+
+    try {
+      const result = await fetchReadAiMeetings(apiKey, 10)
+      setReadAiMeetings(result.meetings || [])
+      
+      // If meetings found, show them in a selectable list
+      if (result.meetings && result.meetings.length > 0) {
+        setShowReadAiHelp(false)
+      } else {
+        setReadAiError('No recent meetings found')
+      }
+    } catch (err) {
+      console.error('Failed to fetch Read.ai meetings:', err)
+      setReadAiError(err.message || 'Failed to fetch meetings. Please try again.')
+    } finally {
+      setReadAiFetching(false)
+    }
+  }
+
+  const handleSelectReadAiMeeting = async (meeting) => {
+    setExtracting(true)
+    setExtractError(null)
+    setMeetingTitle(meeting.title || 'Read.ai Meeting')
+
+    try {
+      const insights = await extractMeetingInsights({
+        title: meeting.title || 'Read.ai Meeting',
+        notes: meeting.transcript || meeting.summary || meeting.notes || ''
+      })
+      setMeetingInsights(insights)
+      setNotes(meeting.transcript || meeting.summary || meeting.notes || '')
+    } catch (err) {
+      console.error('Failed to process Read.ai meeting:', err)
+      setExtractError(err.message || 'Failed to process meeting')
+    } finally {
+      setExtracting(false)
+    }
+  }
+
+  const handleDisconnectReadAi = async () => {
+    await disconnectReadAi()
+    setReadAiApiKey('')
+    setReadAiConnected(false)
+    setReadAiMeetings([])
+    setReadAiError(null)
+  }
 
   const handleConfirm = () => {
     // Pass mentor recommendation plus any meeting insights forward
@@ -221,19 +314,81 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
 
         {showReadAiHelp && (
           <div className="readai-help-box">
-            <h4>Connect Read.ai via Zapier</h4>
-            <p>Set up automatic sync so your Read.ai notes flow into Cago:</p>
-            <ol>
-              <li>Go to <a href="https://zapier.com" target="_blank" rel="noopener noreferrer">Zapier.com</a> and create a free account</li>
-              <li>Create a new Zap: <strong>Read.ai</strong> → <strong>Webhooks by Zapier</strong></li>
-              <li>Trigger: &quot;New Note&quot; or &quot;New Meeting Summary&quot;</li>
-              <li>Action: POST to Webhook URL</li>
-              <li>URL: <code>{window.location.origin}/api/webhook/meeting</code></li>
-              <li>Body: Map Read.ai fields to <code>meeting.title</code> and <code>meeting.transcript</code></li>
-            </ol>
-            <p className="readai-note">
-              Once connected, your Read.ai notes will automatically appear here with summaries and action items.
-            </p>
+            {!readAiConnected ? (
+              <>
+                <h4>Connect Read.ai</h4>
+                <p>Enter your Read.ai API key to fetch meetings directly:</p>
+                <div className="readai-connect-form">
+                  <input
+                    type="password"
+                    placeholder="Enter your Read.ai API key"
+                    value={readAiApiKey}
+                    onChange={(e) => setReadAiApiKey(e.target.value)}
+                    className="readai-api-input"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleConnectReadAi}
+                    disabled={readAiConnecting || !readAiApiKey.trim()}
+                  >
+                    {readAiConnecting ? 'Connecting...' : 'Connect'}
+                  </button>
+                </div>
+                <p className="readai-note">
+                  Get your API key from Read.ai → Settings → Integrations → API Key
+                </p>
+                {readAiError && (
+                  <div className="readai-error">{readAiError}</div>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="readai-connected-header">
+                  <h4>✓ Read.ai Connected</h4>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-small"
+                    onClick={handleDisconnectReadAi}
+                  >
+                    Disconnect
+                  </button>
+                </div>
+                <div className="readai-actions">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleFetchReadAiMeetings}
+                    disabled={readAiFetching}
+                  >
+                    {readAiFetching ? 'Fetching...' : 'Fetch Recent Meetings'}
+                  </button>
+                </div>
+                {readAiError && (
+                  <div className="readai-error">{readAiError}</div>
+                )}
+                {readAiMeetings.length > 0 && (
+                  <div className="readai-meetings-list">
+                    <h5>Select a meeting:</h5>
+                    {readAiMeetings.map((meeting, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className="readai-meeting-item"
+                        onClick={() => handleSelectReadAiMeeting(meeting)}
+                      >
+                        <div className="meeting-item-title">{meeting.title || 'Untitled Meeting'}</div>
+                        {meeting.date && (
+                          <div className="meeting-item-date">
+                            {new Date(meeting.date).toLocaleDateString()}
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
 

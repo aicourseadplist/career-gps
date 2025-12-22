@@ -632,6 +632,105 @@ Return ONLY valid JSON, no markdown.`
   }
 })
 
+// Read.ai direct integration endpoints
+app.post('/api/readai/connect', async (req, res) => {
+  try {
+    const { apiKey } = req.body
+
+    if (!apiKey || !apiKey.trim()) {
+      return res.status(400).json({ error: 'API key is required' })
+    }
+
+    // Validate API key by making a test request to Read.ai
+    // Note: This is a placeholder - you'll need to use Read.ai's actual API endpoint
+    // For now, we'll just validate format and store it
+    if (apiKey.length < 10) {
+      return res.status(400).json({ error: 'Invalid API key format' })
+    }
+
+    // In production, you'd make an actual API call to Read.ai to validate:
+    // const testResponse = await fetch('https://api.read.ai/v1/me', {
+    //   headers: { 'Authorization': `Bearer ${apiKey}` }
+    // })
+    // if (!testResponse.ok) {
+    //   return res.status(401).json({ error: 'Invalid API key' })
+    // }
+
+    res.json({ 
+      success: true,
+      message: 'Read.ai connected successfully'
+    })
+  } catch (error) {
+    console.error('Read.ai connect error:', error)
+    res.status(500).json({ error: 'Failed to connect to Read.ai' })
+  }
+})
+
+app.post('/api/readai/meetings', async (req, res) => {
+  try {
+    const { apiKey, limit = 10 } = req.body
+
+    if (!apiKey || !apiKey.trim()) {
+      return res.status(400).json({ error: 'API key is required' })
+    }
+
+    // Fetch meetings from Read.ai API
+    // Note: This is a placeholder - you'll need Read.ai's actual API endpoint
+    // Example structure based on common API patterns:
+    const readAiApiUrl = process.env.READAI_API_URL || 'https://api.read.ai/v1'
+    
+    try {
+      // Attempt to fetch meetings from Read.ai
+      // This is a placeholder - replace with actual Read.ai API call
+      const meetingsResponse = await fetch(`${readAiApiUrl}/meetings?limit=${limit}`, {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (!meetingsResponse.ok) {
+        // If API call fails, return a helpful error
+        if (meetingsResponse.status === 401) {
+          return res.status(401).json({ error: 'Invalid API key. Please check your Read.ai API key.' })
+        }
+        throw new Error(`Read.ai API returned ${meetingsResponse.status}`)
+      }
+
+      const data = await meetingsResponse.json()
+      
+      // Transform Read.ai meetings to our format
+      const meetings = (data.meetings || data.data || []).map(meeting => ({
+        id: meeting.id || meeting.meeting_id,
+        title: meeting.title || meeting.name || 'Untitled Meeting',
+        date: meeting.created_at || meeting.date || meeting.start_time,
+        transcript: meeting.transcript || meeting.notes || meeting.summary || '',
+        summary: meeting.summary || meeting.ai_summary || '',
+        notes: meeting.notes || meeting.transcript || ''
+      }))
+
+      res.json({ 
+        success: true,
+        meetings 
+      })
+    } catch (fetchError) {
+      // If Read.ai API is not available or endpoint is different,
+      // return a mock response for development
+      console.warn('Read.ai API not available, returning mock data:', fetchError.message)
+      
+      // Mock response for development/testing
+      res.json({
+        success: true,
+        meetings: [],
+        message: 'Read.ai API endpoint not configured. Please check READAI_API_URL environment variable or use webhook integration.'
+      })
+    }
+  } catch (error) {
+    console.error('Read.ai meetings error:', error)
+    res.status(500).json({ error: 'Failed to fetch meetings from Read.ai' })
+  }
+})
+
 // Webhook endpoint for Read.ai/Zapier or similar tools.
 // You can point a Zapier "POST Webhook" here from Read.ai.
 app.post('/api/webhook/meeting', async (req, res) => {

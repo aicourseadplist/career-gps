@@ -60,3 +60,41 @@ export async function extractMeetingInsights(meetingData) {
   return response.json()
 }
 
+// Read.ai integration functions
+export async function connectReadAi(apiKey) {
+  const response = await fetch(`${API_BASE}/readai/connect`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ apiKey })
+  })
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}))
+    throw new Error(errorBody.error || 'Failed to connect to Read.ai')
+  }
+
+  return response.json()
+}
+
+export async function fetchReadAiMeetings(apiKey, limit = 10) {
+  const response = await fetch(`${API_BASE}/readai/meetings`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ apiKey, limit })
+  })
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}))
+    throw new Error(errorBody.error || 'Failed to fetch meetings from Read.ai')
+  }
+
+  return response.json()
+}
+
+export async function disconnectReadAi() {
+  // Clear stored API key
+  localStorage.removeItem('readai_api_key')
+  localStorage.removeItem('readai_connected')
+  return { success: true }
+}
+
