@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import Anthropic from '@anthropic-ai/sdk'
 import dotenv from 'dotenv'
+import multer from 'multer'
+import pdfParse from 'pdf-parse'
 
 dotenv.config()
 
@@ -10,6 +12,9 @@ const PORT = process.env.PORT || 3001
 
 app.use(cors())
 app.use(express.json())
+
+// For file uploads (PDF extraction)
+const upload = multer({ storage: multer.memoryStorage() })
 
 // Initialize Anthropic client
 const anthropic = new Anthropic({
@@ -479,6 +484,57 @@ RULES:
   } catch (error) {
     console.error('Meeting extract error:', error)
     res.status(500).json({ error: 'Failed to extract meeting insights' })
+  }
+})
+
+// Extract text from uploaded file (PDF or text)
+app.post('/api/meeting/extract-file', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' })
+    }
+
+    const { originalname, mimetype, buffer } = req.file
+    const title = req.body.title || originalname.replace(/\.[^/.]+$/, '')
+
+    let extractedText = ''
+
+    // Handle PDF files
+    if (mimetype === 'application/pdf' || originalname.endsWith('.pdf')) {
+      try {
+        const pdfData = await pdfParse(buffer)
+        extractedText = pdfData.text
+      } catch (pdfError) {
+        console.error('PDF parse error:', pdfError)
+        return res.status(400).json({ 
+          error: 'Unable to extract text from PDF. Please try a different file or paste the text directly.' 
+        })
+      }
+    }
+    // Handle text files
+    else if (mimetype.startsWith('text/') || originalname.endsWith('.txt')) {
+      extractedText = buffer.toString('utf-8')
+    }
+    else {
+      return res.status(400).json({ 
+        error: 'Unsupported file type. Please upload a PDF or text file.' 
+      })
+    }
+
+    if (!extractedText.trim()) {
+      return res.status(400).json({ 
+        error: 'No text found in file. Please check the file and try again.' 
+      })
+    }
+
+    res.json({
+      text: extractedText,
+      title,
+      filename: originalname
+    })
+  } catch (error) {
+    console.error('File extraction error:', error)
+    res.status(500).json({ error: 'Failed to process file' })
   }
 })
 
