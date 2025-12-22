@@ -9,7 +9,7 @@ const signals = [
   { id: 'writing-code', label: 'Writing code & systems', description: 'Making things work under the hood' },
   { id: 'storytelling-growth', label: 'Storytelling & growth', description: 'Reaching people, changing minds' },
   { id: 'leading-people', label: 'Leading people or projects', description: 'Guiding others toward outcomes' },
-  { id: 'exploring', label: 'Still figuring it out', description: 'Not sure yet, and that's okay' },
+  { id: 'exploring', label: 'Still figuring it out', description: 'Not sure yet, and that\'s okay' },
   { id: 'other', label: 'Something else', description: 'None of these feel right' }
 ]
 
