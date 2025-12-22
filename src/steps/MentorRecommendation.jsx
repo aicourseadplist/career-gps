@@ -264,11 +264,11 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
               <span>Or upload a file:</span>
               <input
                 type="file"
-                accept=".txt,.pdf,text/plain,application/pdf"
+                accept=".txt,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 onChange={handleFileUpload}
                 disabled={extracting}
               />
-              <span className="file-hint">Supports .txt and .pdf files</span>
+              <span className="file-hint">Supports .txt, .pdf, and .docx files</span>
             </div>
 
             {extractError && (

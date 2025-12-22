@@ -4,6 +4,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import dotenv from 'dotenv'
 import multer from 'multer'
 import pdfParse from 'pdf-parse'
+import mammoth from 'mammoth'
 
 dotenv.config()
 
@@ -13,7 +14,7 @@ const PORT = process.env.PORT || 3001
 app.use(cors())
 app.use(express.json())
 
-// For file uploads (PDF extraction)
+// For file uploads (PDF / DOCX extraction)
 const upload = multer({ storage: multer.memoryStorage() })
 
 // Initialize Anthropic client
@@ -406,7 +407,7 @@ Return ONLY valid JSON, no markdown.`
         for (let i = 0; i < openBraces - closeBraces; i++) repaired += '}'
       }
       
-      plan = JSON.parse(repaired.trim())
+        plan = JSON.parse(repaired.trim())
     }
     plan.directionLabel = directionLabel
     
@@ -487,7 +488,7 @@ RULES:
   }
 })
 
-// Extract text from uploaded file (PDF or text)
+// Extract text from uploaded file (PDF, DOCX, or text)
 app.post('/api/meeting/extract-file', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
@@ -500,7 +501,7 @@ app.post('/api/meeting/extract-file', upload.single('file'), async (req, res) =>
     let extractedText = ''
 
     // Handle PDF files
-    if (mimetype === 'application/pdf' || originalname.endsWith('.pdf')) {
+    if (mimetype === 'application/pdf' || originalname.toLowerCase().endsWith('.pdf')) {
       try {
         const pdfData = await pdfParse(buffer)
         extractedText = pdfData.text
@@ -511,13 +512,28 @@ app.post('/api/meeting/extract-file', upload.single('file'), async (req, res) =>
         })
       }
     }
-    // Handle text files
-    else if (mimetype.startsWith('text/') || originalname.endsWith('.txt')) {
+    // Handle DOCX files
+    else if (
+      mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+      originalname.toLowerCase().endsWith('.docx')
+    ) {
+      try {
+        const result = await mammoth.extractRawText({ buffer })
+        extractedText = result.value || ''
+      } catch (docxError) {
+        console.error('DOCX parse error:', docxError)
+        return res.status(400).json({ 
+          error: 'Unable to extract text from DOCX. Please try a different file or paste the text directly.' 
+        })
+      }
+    }
+    // Handle plain text files
+    else if (mimetype.startsWith('text/') || originalname.toLowerCase().endsWith('.txt')) {
       extractedText = buffer.toString('utf-8')
     }
     else {
       return res.status(400).json({ 
-        error: 'Unsupported file type. Please upload a PDF or text file.' 
+        error: 'Unsupported file type. Please upload a PDF, DOCX, or text file.' 
       })
     }
 
