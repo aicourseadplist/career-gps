@@ -434,12 +434,12 @@
   margin-bottom: var(--space-md);
 }
 
-.granola-connect-btn {
+.readai-connect-btn {
   white-space: nowrap;
   flex-shrink: 0;
 }
 
-.granola-help-box {
+.readai-help-box {
   background: var(--color-warm-white);
   border: 1px solid var(--color-sand);
   border-radius: 12px;
@@ -447,32 +447,32 @@
   margin-bottom: var(--space-md);
 }
 
-.granola-help-box h4 {
+.readai-help-box h4 {
   font-size: 1rem;
   font-weight: 500;
   color: var(--color-ink);
   margin-bottom: var(--space-sm);
 }
 
-.granola-help-box p {
+.readai-help-box p {
   font-size: 0.875rem;
   color: var(--color-stone);
   margin-bottom: var(--space-sm);
 }
 
-.granola-help-box ol {
+.readai-help-box ol {
   margin: var(--space-sm) 0;
   padding-left: var(--space-lg);
 }
 
-.granola-help-box li {
+.readai-help-box li {
   font-size: 0.875rem;
   color: var(--color-charcoal);
   margin-bottom: var(--space-xs);
   line-height: 1.5;
 }
 
-.granola-help-box code {
+.readai-help-box code {
   background: rgba(0, 0, 0, 0.05);
   padding: 2px 6px;
   border-radius: 4px;
@@ -481,12 +481,12 @@
   word-break: break-all;
 }
 
-.granola-help-box a {
+.readai-help-box a {
   color: var(--color-accent);
   text-decoration: underline;
 }
 
-.granola-note {
+.readai-note {
   margin-top: var(--space-md);
   padding-top: var(--space-md);
   border-top: 1px solid var(--color-sand);

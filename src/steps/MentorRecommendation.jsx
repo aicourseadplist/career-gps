@@ -13,7 +13,7 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
   const [extracting, setExtracting] = useState(false)
   const [extractError, setExtractError] = useState(null)
   const [meetingInsights, setMeetingInsights] = useState(null)
-  const [showGranolaHelp, setShowGranolaHelp] = useState(false)
+  const [showReadAiHelp, setShowReadAiHelp] = useState(false)
 
   useEffect(() => {
     async function fetchRecommendation() {
@@ -206,33 +206,33 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
           <div>
             <h3 className="section-title">Bring in notes from a recent conversation</h3>
             <p className="section-subtitle">
-              Connect Granola for automatic sync, or upload/paste meeting notes. 
+              Connect Read.ai for automatic sync, or upload/paste meeting notes. 
               We&apos;ll extract session summaries, highlights, and action items.
             </p>
           </div>
           <button
             type="button"
-            className="btn btn-ghost granola-connect-btn"
-            onClick={() => setShowGranolaHelp(!showGranolaHelp)}
+            className="btn btn-ghost readai-connect-btn"
+            onClick={() => setShowReadAiHelp(!showReadAiHelp)}
           >
-            {showGranolaHelp ? 'Hide' : 'Connect Granola'}
+            {showReadAiHelp ? 'Hide' : 'Connect Read.ai'}
           </button>
         </div>
 
-        {showGranolaHelp && (
-          <div className="granola-help-box">
-            <h4>Connect Granola via Zapier</h4>
-            <p>Set up automatic sync so your Granola notes flow into Cago:</p>
+        {showReadAiHelp && (
+          <div className="readai-help-box">
+            <h4>Connect Read.ai via Zapier</h4>
+            <p>Set up automatic sync so your Read.ai notes flow into Cago:</p>
             <ol>
               <li>Go to <a href="https://zapier.com" target="_blank" rel="noopener noreferrer">Zapier.com</a> and create a free account</li>
-              <li>Create a new Zap: <strong>Granola</strong> → <strong>Webhooks by Zapier</strong></li>
+              <li>Create a new Zap: <strong>Read.ai</strong> → <strong>Webhooks by Zapier</strong></li>
               <li>Trigger: &quot;New Note&quot; or &quot;New Meeting Summary&quot;</li>
               <li>Action: POST to Webhook URL</li>
               <li>URL: <code>{window.location.origin}/api/webhook/meeting</code></li>
-              <li>Body: Map Granola fields to <code>meeting.title</code> and <code>meeting.transcript</code></li>
+              <li>Body: Map Read.ai fields to <code>meeting.title</code> and <code>meeting.transcript</code></li>
             </ol>
-            <p className="granola-note">
-              Once connected, your Granola notes will automatically appear here with summaries and action items.
+            <p className="readai-note">
+              Once connected, your Read.ai notes will automatically appear here with summaries and action items.
             </p>
           </div>
         )}
@@ -257,7 +257,7 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
               id="meeting-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Paste notes from Granola or your own writing. Bullet points are fine."
+              placeholder="Paste notes from Read.ai or your own writing. Bullet points are fine."
               rows={6}
             />
 

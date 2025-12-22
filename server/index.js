@@ -632,8 +632,8 @@ Return ONLY valid JSON, no markdown.`
   }
 })
 
-// Webhook endpoint for Granola/Zapier or similar tools.
-// You can point a Zapier "POST Webhook" here from Granola.
+// Webhook endpoint for Read.ai/Zapier or similar tools.
+// You can point a Zapier "POST Webhook" here from Read.ai.
 app.post('/api/webhook/meeting', async (req, res) => {
   try {
     const { source, meeting } = req.body
