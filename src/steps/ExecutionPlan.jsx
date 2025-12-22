@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { generateExecutionPlan } from '../api/client'
 import { downloadJourneyPDF } from '../components/JourneyPDF'
 import LoadingState from '../components/LoadingState'
+import FollowUpsAndReminders from '../components/FollowUpsAndReminders'
 import './ExecutionPlan.css'
 
 function ExecutionPlan({ userData, journeyData, onPlanReady, onStartOver }) {
@@ -544,6 +545,21 @@ function ExecutionPlan({ userData, journeyData, onPlanReady, onStartOver }) {
                 </div>
               </section>
             )}
+
+            {/* AI Follow-ups & Reminders from Meetings */}
+            <section className="plan-section">
+              <FollowUpsAndReminders
+                meetingInsights={journeyData.mentor?.meetingInsights || null}
+                userData={userData}
+                onActionItemAdd={(item) => {
+                  // Store action item for later use
+                  const stored = localStorage.getItem('cago_action_items') || '[]'
+                  const items = JSON.parse(stored)
+                  items.push({ ...item, id: `action-${Date.now()}`, createdAt: new Date().toISOString() })
+                  localStorage.setItem('cago_action_items', JSON.stringify(items))
+                }}
+              />
+            </section>
           </div>
         )}
       </div>

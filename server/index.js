@@ -554,6 +554,84 @@ app.post('/api/meeting/extract-file', upload.single('file'), async (req, res) =>
   }
 })
 
+// Generate AI-powered follow-ups based on recent meetings
+app.post('/api/meeting/followups', async (req, res) => {
+  try {
+    const { recentMeetings, currentMeeting, userContext } = req.body
+
+    if (!recentMeetings || recentMeetings.length === 0) {
+      return res.status(400).json({ error: 'No recent meetings provided' })
+    }
+
+    const prompt = `You are analyzing someone's recent career conversations to suggest proactive follow-ups.
+
+USER CONTEXT:
+- Direction: ${userContext?.directionLabel || 'Not specified'}
+- Background: ${userContext?.background || 'Not provided'}
+
+RECENT MEETINGS (${recentMeetings.length} total):
+${recentMeetings.map((m, i) => `
+Meeting ${i + 1}: ${m.title || 'Untitled'}
+Date: ${m.date ? new Date(m.date).toLocaleDateString() : 'Recent'}
+Summary: ${m.summary || 'No summary'}
+Action Items: ${(m.actionItems || []).map(a => a.text).join(', ') || 'None'}
+`).join('\n')}
+
+${currentMeeting ? `
+CURRENT MEETING JUST PROCESSED:
+Title: ${currentMeeting.title || 'Recent conversation'}
+Summary: ${currentMeeting.summary || 'No summary'}
+Action Items: ${(currentMeeting.actionItems || []).map(a => a.text).join(', ') || 'None'}
+` : ''}
+
+YOUR TASK:
+Analyze patterns across these meetings and suggest 3-5 proactive follow-up actions that:
+1. Build on themes from multiple conversations
+2. Address gaps or opportunities mentioned
+3. Are specific and actionable
+4. Have appropriate timing (immediate, this week, next week)
+
+OUTPUT (JSON only):
+{
+  "context": "1-2 sentences explaining what patterns you noticed across their meetings",
+  "suggestions": [
+    {
+      "action": "Specific follow-up action",
+      "reason": "Why this matters based on their conversations",
+      "priority": "high | medium | low",
+      "timing": "When to do this (e.g., 'Today', 'This week', 'Before next meeting')"
+    }
+  ]
+}
+
+RULES:
+- Be specific to THEIR conversations, not generic
+- Reference actual people, companies, or topics mentioned
+- Prioritize actions that connect multiple meetings
+- Keep timing realistic
+
+Return ONLY valid JSON, no markdown.`
+
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: prompt }]
+    })
+
+    const content = message.content[0].text
+    const followUps = extractJSON(content)
+
+    // Ensure arrays exist
+    if (!Array.isArray(followUps.suggestions)) followUps.suggestions = []
+
+    res.json(followUps)
+  } catch (error) {
+    console.error('Follow-ups error:', error)
+    res.status(500).json({ error: 'Failed to generate follow-ups' })
+  }
+})
+
 // Webhook endpoint for Granola/Zapier or similar tools.
 // You can point a Zapier "POST Webhook" here from Granola.
 app.post('/api/webhook/meeting', async (req, res) => {

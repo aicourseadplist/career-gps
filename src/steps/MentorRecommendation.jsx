@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { generateMentorRecommendation, extractMeetingInsights } from '../api/client'
 import LoadingState from '../components/LoadingState'
+import FollowUpsAndReminders from '../components/FollowUpsAndReminders'
 import './MentorRecommendation.css'
 
 function MentorRecommendation({ userData, onConfirm, onBack }) {
@@ -322,6 +323,19 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
           )}
         </div>
       </div>
+
+      {/* AI Follow-ups & Reminders */}
+      <FollowUpsAndReminders
+        meetingInsights={meetingInsights}
+        userData={userData}
+        onActionItemAdd={(item) => {
+          // Store action item for later use
+          const stored = localStorage.getItem('cago_action_items') || '[]'
+          const items = JSON.parse(stored)
+          items.push({ ...item, id: `action-${Date.now()}`, createdAt: new Date().toISOString() })
+          localStorage.setItem('cago_action_items', JSON.stringify(items))
+        }}
+      />
 
       {/* What to Expect - Personalized */}
       {sessionExpectations && sessionExpectations.length > 0 && (

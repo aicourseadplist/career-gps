@@ -1,0 +1,222 @@
+/* Follow-ups & Reminders Component */
+
+.followups-reminders-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+/* Follow-ups Box */
+.followups-box {
+  background: linear-gradient(135deg, rgba(184, 151, 122, 0.08) 0%, rgba(184, 151, 122, 0.03) 100%);
+  border: 1px solid var(--color-accent-soft);
+  border-radius: 16px;
+  padding: var(--space-lg);
+}
+
+.followups-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.followups-icon {
+  font-size: 1.5rem;
+}
+
+.followups-header h4 {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.followups-intro {
+  font-size: 0.875rem;
+  color: var(--color-stone);
+  margin-bottom: var(--space-md);
+  line-height: 1.5;
+}
+
+.followups-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.followup-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: white;
+  border-radius: 10px;
+  border-left: 3px solid var(--color-accent);
+}
+
+.followup-priority {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.followup-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.followup-text {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-charcoal);
+}
+
+.followup-reason {
+  font-size: 0.8125rem;
+  color: var(--color-stone);
+  font-style: italic;
+}
+
+.followup-timing {
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.followup-item .btn-small {
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  flex-shrink: 0;
+}
+
+/* Reminders Box */
+.reminders-box {
+  background: var(--color-warm-white);
+  border: 1px solid var(--color-sand);
+  border-radius: 16px;
+  padding: var(--space-lg);
+}
+
+.reminders-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.reminders-icon {
+  font-size: 1.5rem;
+}
+
+.reminders-header h4 {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.reminders-intro {
+  font-size: 0.875rem;
+  color: var(--color-stone);
+  margin-bottom: var(--space-md);
+}
+
+.reminders-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.reminder-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border-radius: 8px;
+  transition: background var(--transition-gentle);
+}
+
+.reminder-item:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.reminder-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.reminder-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.reminder-text {
+  font-size: 0.9375rem;
+  color: var(--color-charcoal);
+}
+
+.reminder-item input[type="checkbox"]:checked ~ .reminder-content .reminder-text {
+  text-decoration: line-through;
+  color: var(--color-warm-gray);
+}
+
+.reminder-meta {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.reminder-due {
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.reminder-source {
+  font-size: 0.75rem;
+  color: var(--color-warm-gray);
+}
+
+.reminder-item.priority-high {
+  border-left: 3px solid #DC2626;
+}
+
+.reminder-item.priority-medium {
+  border-left: 3px solid var(--color-accent);
+}
+
+.reminder-item.priority-low {
+  border-left: 3px solid var(--color-warm-gray);
+}
+
+.followups-loading {
+  text-align: center;
+  padding: var(--space-md);
+  color: var(--color-stone);
+  font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .followup-item {
+    flex-wrap: wrap;
+  }
+  
+  .followup-item .btn-small {
+    width: 100%;
+    margin-top: var(--space-xs);
+  }
+}
+
