@@ -151,6 +151,98 @@
   border: 1px solid var(--color-sand);
 }
 
+/* Meeting Notes → Insights */
+.meeting-notes-section {
+  margin-top: var(--space-xl);
+}
+
+.meeting-input-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--space-lg);
+  align-items: flex-start;
+}
+
+.meeting-input-column input[type="text"],
+.meeting-input-column textarea {
+  width: 100%;
+  margin-bottom: var(--space-sm);
+}
+
+.field-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--color-stone);
+  margin-bottom: var(--space-xs);
+}
+
+.meeting-input-hint {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+  margin-bottom: var(--space-sm);
+  font-size: 0.8125rem;
+  color: var(--color-warm-gray);
+}
+
+.meeting-input-hint input[type="file"] {
+  font-size: 0.8125rem;
+}
+
+.meeting-error {
+  margin-top: var(--space-xs);
+  margin-bottom: var(--space-xs);
+  font-size: 0.8125rem;
+  color: #DC2626;
+}
+
+.meeting-extract-btn {
+  margin-top: var(--space-sm);
+}
+
+.meeting-output-column {
+  padding: var(--space-md);
+  background-color: var(--color-cream);
+  border-radius: 8px;
+  border: 1px solid var(--color-sand);
+}
+
+.output-title {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-warm-gray);
+  margin-bottom: var(--space-xs);
+}
+
+.output-summary {
+  font-size: 0.9375rem;
+  color: var(--color-charcoal);
+  margin-bottom: var(--space-md);
+}
+
+.output-list {
+  list-style: disc;
+  padding-left: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.output-list li {
+  font-size: 0.9375rem;
+  color: var(--color-stone);
+  margin-bottom: 4px;
+}
+
+.action-text {
+  color: var(--color-charcoal);
+}
+
+.action-meta {
+  color: var(--color-warm-gray);
+  font-size: 0.8125rem;
+}
+
 /* Expectations */
 .expectations-list {
   display: flex;
@@ -326,5 +418,9 @@
   .question-icon,
   .prepare-number {
     margin-bottom: var(--space-xs);
+  }
+
+  .meeting-input-grid {
+    grid-template-columns: 1fr;
   }
 }

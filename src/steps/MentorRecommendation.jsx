@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { generateMentorRecommendation } from '../api/client'
+import { generateMentorRecommendation, extractMeetingInsights } from '../api/client'
 import LoadingState from '../components/LoadingState'
 import './MentorRecommendation.css'
 
@@ -7,6 +7,11 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
   const [recommendation, setRecommendation] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [notes, setNotes] = useState('')
+  const [meetingTitle, setMeetingTitle] = useState('')
+  const [extracting, setExtracting] = useState(false)
+  const [extractError, setExtractError] = useState(null)
+  const [meetingInsights, setMeetingInsights] = useState(null)
 
   useEffect(() => {
     async function fetchRecommendation() {
@@ -26,7 +31,58 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
   }, [userData])
 
   const handleConfirm = () => {
-    onConfirm(recommendation)
+    // Pass mentor recommendation plus any meeting insights forward
+    onConfirm({
+      ...recommendation,
+      meetingInsights
+    })
+  }
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    // Only handle simple text-like files in browser
+    if (!file.type.startsWith('text/')) {
+      setExtractError('For now, please upload a plain text file or paste notes directly.')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const text = e.target?.result
+      if (typeof text === 'string') {
+        setNotes(text)
+        setExtractError(null)
+      }
+    }
+    reader.onerror = () => {
+      setExtractError('Unable to read file. Please try again or paste your notes instead.')
+    }
+    reader.readAsText(file)
+  }
+
+  const handleExtract = async () => {
+    if (!notes.trim()) {
+      setExtractError('Add some notes or transcript first.')
+      return
+    }
+
+    setExtracting(true)
+    setExtractError(null)
+
+    try {
+      const insights = await extractMeetingInsights({
+        title: meetingTitle || 'Conversation notes',
+        notes
+      })
+      setMeetingInsights(insights)
+    } catch (err) {
+      console.error('Failed to extract meeting insights:', err)
+      setExtractError(err.message || 'Unable to extract insights. Please try again.')
+    } finally {
+      setExtracting(false)
+    }
   }
 
   if (loading) {
@@ -98,6 +154,99 @@ function MentorRecommendation({ userData, onConfirm, onBack }) {
               <p className="reasoning-text">{reason.text}</p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Meeting Notes → Session Insights */}
+      <div className="session-section fade-in-delay-2 meeting-notes-section">
+        <h3 className="section-title">Bring in notes from a recent conversation</h3>
+        <p className="section-subtitle">
+          Paste Granola notes, a transcript, or simple meeting notes. We&apos;ll turn it into 
+          a calm summary, highlights, and clear action items for this session.
+        </p>
+
+        <div className="meeting-input-grid">
+          <div className="meeting-input-column">
+            <label className="field-label" htmlFor="meeting-title">
+              Optional title
+            </label>
+            <input
+              id="meeting-title"
+              type="text"
+              value={meetingTitle}
+              onChange={(e) => setMeetingTitle(e.target.value)}
+              placeholder="e.g., Career chat with Sarah, 1:1 with manager..."
+            />
+
+            <label className="field-label" htmlFor="meeting-notes">
+              Notes or transcript
+            </label>
+            <textarea
+              id="meeting-notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Paste notes from Granola or your own writing. Bullet points are fine."
+              rows={6}
+            />
+
+            <div className="meeting-input-hint">
+              <span>Or upload a simple text file:</span>
+              <input
+                type="file"
+                accept=".txt,text/plain"
+                onChange={handleFileUpload}
+              />
+            </div>
+
+            {extractError && (
+              <div className="meeting-error">
+                {extractError}
+              </div>
+            )}
+
+            <button
+              type="button"
+              className="btn btn-secondary meeting-extract-btn"
+              onClick={handleExtract}
+              disabled={extracting || !notes.trim()}
+            >
+              {extracting ? 'Extracting insights...' : 'Summarize & extract action items'}
+            </button>
+          </div>
+
+          {meetingInsights && (
+            <div className="meeting-output-column">
+              <h4 className="output-title">Session summary</h4>
+              <p className="output-summary">{meetingInsights.summary}</p>
+
+              {Array.isArray(meetingInsights.highlights) && meetingInsights.highlights.length > 0 && (
+                <>
+                  <h4 className="output-title">Highlights</h4>
+                  <ul className="output-list">
+                    {meetingInsights.highlights.map((h, i) => (
+                      <li key={i}>{h}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {Array.isArray(meetingInsights.actionItems) && meetingInsights.actionItems.length > 0 && (
+                <>
+                  <h4 className="output-title">Action items from this session</h4>
+                  <ul className="output-list">
+                    {meetingInsights.actionItems.map((item, i) => (
+                      <li key={i}>
+                        <span className="action-text">{item.text}</span>
+                        {item.due && (
+                          <span className="action-meta"> · {item.due}</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

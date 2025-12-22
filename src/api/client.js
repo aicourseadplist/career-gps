@@ -44,3 +44,19 @@ export async function generateExecutionPlan(userData) {
   return response.json()
 }
 
+// Extract session summary, highlights, and action items from meeting notes/transcript
+export async function extractMeetingInsights(meetingData) {
+  const response = await fetch(`${API_BASE}/meeting/extract`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(meetingData)
+  })
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}))
+    throw new Error(errorBody.error || 'Failed to extract meeting insights')
+  }
+
+  return response.json()
+}
+

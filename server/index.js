@@ -412,6 +412,153 @@ Return ONLY valid JSON, no markdown.`
   }
 })
 
+// Extract meeting insights (summary, highlights, action items) from notes/transcript
+app.post('/api/meeting/extract', async (req, res) => {
+  try {
+    const { title, notes } = req.body
+
+    if (!notes || !notes.trim()) {
+      return res.status(400).json({ error: 'Meeting notes are required' })
+    }
+
+    const prompt = `You are helping someone make sense of a past conversation or meeting.
+
+MEETING TITLE (optional):
+${title || 'Untitled conversation'}
+
+RAW NOTES / TRANSCRIPT:
+${notes}
+
+YOUR TASK:
+Turn this into something the user can actually use inside a career session. Focus on:
+- a calm, grounded summary
+- the 3–7 most important highlights
+- 3–7 concrete action items related to career progress (learning, networking, applications, reflection)
+
+OUTPUT (JSON only):
+{
+  "summary": "2-4 sentence neutral recap of what was discussed, no advice.",
+  "highlights": [
+    "Key insight, theme, or quote from the conversation",
+    "Another important point, in plain language"
+  ],
+  "actionItems": [
+    {
+      "text": "Specific action to take based on the session",
+      "priority": "high | medium | low",
+      "due": "Free-text timing like 'this week', 'before next interview', 'when you have energy'"
+    }
+  ]
+}
+
+RULES:
+- Do NOT invent people or companies that are not mentioned.
+- Keep the summary observational, not prescriptive.
+- Action items should be small enough to actually do.
+- Return ONLY valid JSON, no markdown.`
+
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: prompt }]
+    })
+
+    const content = message.content[0].text
+    const extraction = extractJSON(content)
+
+    // Basic safety defaults
+    if (!Array.isArray(extraction.highlights)) extraction.highlights = []
+    if (!Array.isArray(extraction.actionItems)) extraction.actionItems = []
+
+    res.json({
+      summary: extraction.summary || 'Meeting processed.',
+      highlights: extraction.highlights,
+      actionItems: extraction.actionItems
+    })
+  } catch (error) {
+    console.error('Meeting extract error:', error)
+    res.status(500).json({ error: 'Failed to extract meeting insights' })
+  }
+})
+
+// Webhook endpoint for Granola/Zapier or similar tools.
+// You can point a Zapier "POST Webhook" here from Granola.
+app.post('/api/webhook/meeting', async (req, res) => {
+  try {
+    const { source, meeting } = req.body
+
+    console.log('Received meeting webhook from', source || 'unknown')
+
+    // Very simple MVP behaviour: just run extraction and return result.
+    const title = meeting?.title || 'Untitled conversation'
+    const notes =
+      meeting?.transcript ||
+      meeting?.notes ||
+      meeting?.summary ||
+      ''
+
+    if (!notes || !notes.trim()) {
+      return res.status(400).json({ error: 'No notes/transcript found in webhook payload' })
+    }
+
+    const prompt = `You are helping someone make sense of a past conversation or meeting.
+
+MEETING TITLE (optional):
+${title}
+
+RAW NOTES / TRANSCRIPT:
+${notes}
+
+YOUR TASK:
+Turn this into something the user can actually use inside a career session. Focus on:
+- a calm, grounded summary
+- the 3–7 most important highlights
+- 3–7 concrete action items related to career progress (learning, networking, applications, reflection)
+
+OUTPUT (JSON only):
+{
+  "summary": "2-4 sentence neutral recap of what was discussed, no advice.",
+  "highlights": [
+    "Key insight, theme, or quote from the conversation",
+    "Another important point, in plain language"
+  ],
+  "actionItems": [
+    {
+      "text": "Specific action to take based on the session",
+      "priority": "high | medium | low",
+      "due": "Free-text timing like 'this week', 'before next interview', 'when you have energy'"
+    }
+  ]
+}
+
+Return ONLY valid JSON, no markdown.`
+
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: prompt }]
+    })
+
+    const content = message.content[0].text
+    const extraction = extractJSON(content)
+
+    res.json({
+      source: source || 'webhook',
+      meeting: {
+        title,
+        summary: extraction.summary || 'Meeting processed.',
+        highlights: Array.isArray(extraction.highlights) ? extraction.highlights : [],
+        actionItems: Array.isArray(extraction.actionItems) ? extraction.actionItems : []
+      }
+    })
+  } catch (error) {
+    console.error('Webhook meeting error:', error)
+    res.status(500).json({ error: 'Failed to process meeting webhook' })
+  }
+})
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' })
